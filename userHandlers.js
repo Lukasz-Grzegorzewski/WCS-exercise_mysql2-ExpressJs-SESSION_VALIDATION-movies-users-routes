@@ -7,7 +7,7 @@ const getUsers = (req, res) => {
     .then(([users]) => res.status(200).json(users))
     .catch((err) => console.error(err)
     )
-};
+}; 
 
 const getUserById = (req, res) => {
   const id = parseInt(req.params.id);
@@ -64,9 +64,28 @@ const updateUser = (req, res) => {
 
 }
 
+const deleteUser = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  database
+    .query("DELETE FROM users WHERE id = ?"
+      , [id])
+    .then(([result]) => {
+      result.affectedRows === 0 ?
+        res.status(404).send("Not Found") :
+        res.sendStatus(204);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error deleting user");
+    })
+
+}
+
 module.exports = {
   getUsers,
   getUserById,
   postUser,
   updateUser,
+  deleteUser,
 };

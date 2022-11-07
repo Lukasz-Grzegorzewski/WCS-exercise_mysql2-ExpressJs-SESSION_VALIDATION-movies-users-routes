@@ -42,7 +42,7 @@ const postMovie = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send("Error saving the movie");
+      res.status(500).send("Error posting the movie");
     });
 }
 
@@ -55,7 +55,6 @@ const updateMovie = (req, res) => {
     .query("update movies set title = ?, director = ?, year = ?, color = ?, duration = ? where id = ?"
       , [title, director, year, color, duration, id])
     .then(([result]) => {
-      // console.log("result.affectedRows :", result.affectedRows);
       result.affectedRows === 0 ?
         res.status(404).send("Not Found") :
         res.sendStatus(204);
@@ -67,9 +66,28 @@ const updateMovie = (req, res) => {
   
 }
 
+const deleteMovie = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  database
+    .query("DELETE FROM movies WHERE id = ?"
+      , [id])
+    .then(([result]) => {
+      result.affectedRows === 0 ?
+        res.status(404).send("Not Found") :
+        res.sendStatus(204);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error deleting the movie");
+    })
+  
+}
+
 module.exports = {
   getMovies,
   getMovieById,
   postMovie,
   updateMovie,
+  deleteMovie,
 };

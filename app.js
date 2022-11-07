@@ -5,7 +5,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
-app.use(express.json());
+app.use(express.json()); 
 
 const port = process.env.APP_PORT ?? 5002;
  
@@ -26,6 +26,9 @@ app.post("/api/users", userHandlers.postUser);
 
 app.put("/api/movies/:id", movieHandlers.updateMovie);
 app.put("/api/users/:id", userHandlers.updateUser);
+
+app.delete("/api/movies/:id", movieHandlers.deleteMovie);
+app.delete("/api/users/:id", userHandlers.deleteUser);
 
 app.listen(port, (err) => {
   if (err) {
