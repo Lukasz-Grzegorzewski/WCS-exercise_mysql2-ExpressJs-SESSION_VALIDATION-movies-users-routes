@@ -2,12 +2,55 @@ const { query } = require("./database");
 const database = require("./database");
 
 const getUsers = (req, res) => {
+
+  const initialSql = "select * from users";
+  const where = [];
+
+  if (req.query.language != null) {
+    where.push({
+      column: "language",
+      value: req.query.language,
+      operator: "=",
+    });
+  }
+  if (req.query.city != null) {
+    where.push({
+      column: "city",
+      value: req.query.city,
+      operator: "=",
+    });
+  }
+
+  // let sql = "SELECT * FROM users";
+  // const sqlValues = [];
+
+  // if (req.query != null){
+  //   console.log("Req.query : ", req.query);
+
+  //   sql += " WHERE"
+  //   if (req.query.language != null){
+  //     sql += " language = ?";
+  //     sqlValues.push(req.query.language);
+  //   }
+  //   if (req.query.city != null){
+  //     sql += " and city <= ?";
+  //     sqlValues.push(req.query.city);
+  //   }
+  // }
+
   database
-    .query("SELECT * FROM users")
+    .query(
+      where.reduce(
+        (sql, { column, operator }, index) =>
+          `${sql} ${index === 0 ? "where" : "and"} ${column} ${operator} ?`,
+        initialSql
+      ),
+      where.map(({ value }) => value)
+    )
     .then(([users]) => res.status(200).json(users))
     .catch((err) => console.error(err)
     )
-}; 
+};
 
 const getUserById = (req, res) => {
   const id = parseInt(req.params.id);
